@@ -1,11 +1,33 @@
 import {createRouter, createWebHistory} from "vue-router";
 
 import Login from "@/components/Login.vue";
+import Main_view from "@/views/Main_view.vue";
+import Algo1 from "@/subviews/Algo1.vue";
+import Algo2 from "@/subviews/Algo2.vue";
 
 const routes = [
     {
-        path : '/login',
+        path: '/',
+        redirect: '/login'  // ⬅️ 添加重定向
+    },
+    {
+        path: '/login',
         component: Login
+    },
+    {
+        path: '/main',
+        component: Main_view,
+        redirect: '/main/algo1',
+        children: [
+            {
+                path: 'algo1',
+                component: Algo1
+            },
+            {
+                path: 'algo2',
+                component: Algo2
+            }
+        ]
     }
 ]
 

@@ -107,24 +107,19 @@ export default {
           message: "Captcha error"
         })
       } else {
-        const formData = new FormData()
-        formData.append("username", this.form.email)
-        formData.append("password", this.form.password)
-        request.post("/user/login/", formData).then(res => {
+
+        const login_data = {
+          "username": this.form.email,
+          "password": this.form.password
+        }
+
+        request.post("/user/login/", login_data).then(res => {
           if (res.code === 200) {
             this.$message({
               type: "success",
               message: "Success"
             })
-            sessionStorage.setItem("id", res.data.id)
-            sessionStorage.setItem("username", res.data.username)
-            sessionStorage.setItem("email", res.data.email)
-            sessionStorage.setItem("curPage", "1")
-            let camera_urls = JSON.parse(res.data.camera_urls.replace(/'/g, "\""))
-            sessionStorage.setItem("camera1url", camera_urls.url1)
-            sessionStorage.setItem("camera2url", camera_urls.url2)
-            sessionStorage.setItem("camera3url", camera_urls.url3)
-            sessionStorage.setItem("camera4url", camera_urls.url4)
+
             this.$router.push("/page1")
           } else {
             this.$message({
@@ -149,11 +144,6 @@ export default {
           message: "Passwords do not match"
         })
       } else {
-        const formData = new FormData()
-        formData.append("username", this.registerData.name)
-        formData.append("email", this.registerData.email)
-        formData.append("password1", this.registerData.password)
-        formData.append("password2", this.registerData.repassword)
         request.post("/user/register/", formData).then(res => {
           this.$message({
             type: "success",
