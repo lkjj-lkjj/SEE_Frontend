@@ -3,7 +3,6 @@
     <el-card>
       <h2 style="margin-bottom: 30px">
         COCOMO Estimator
-        <Popover />
       </h2>
 
       <el-form label-width="220px" class="fp-form">
@@ -35,12 +34,11 @@
 </template>
 
 <script>
-import Popover from '@/components/Popover.vue';
 import CocomoModeTable from "@/components/CocomoModeTable.vue";
 
 export default {
   name: 'COCOMOEstimator',
-  components: {CocomoModeTable, Popover },
+  components: {CocomoModeTable},
   data() {
     return {
       kloc: 0,

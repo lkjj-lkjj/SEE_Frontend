@@ -120,7 +120,7 @@ export default {
               message: "Success"
             })
 
-            this.$router.push("/page1")
+            this.$router.push("/main")
           } else {
             this.$message({
               type: "error",
@@ -144,7 +144,11 @@ export default {
           message: "Passwords do not match"
         })
       } else {
-        request.post("/user/register/", formData).then(res => {
+        const register_data = {
+          'username': this.registerData.username,
+          'password': this.registerData.password,
+        }
+        request.post("/user/register/", register_data).then(res => {
           this.$message({
             type: "success",
             message: "Success"
@@ -158,9 +162,6 @@ export default {
         })
       }
     },
-    toFaceRecognize() {
-      this.$router.push('/face')
-    }
   },
   components: {
     ImageCode
