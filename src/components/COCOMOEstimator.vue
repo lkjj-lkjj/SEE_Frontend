@@ -3,6 +3,7 @@
     <el-card>
       <h2 style="margin-bottom: 30px">
         COCOMO Estimator
+
       </h2>
 
       <el-form label-width="220px" class="fp-form">
@@ -10,7 +11,30 @@
           <el-input-number v-model="kloc" :min="0" :step="0.1" />
         </el-form-item>
 
-        <el-form-item label="Project Type">
+        <el-form-item>
+          <template #label>
+            <span style="margin-right: 6px">Project Type</span>
+            <el-popover
+                :width="1000"
+                popper-style="box-shadow: rgb(14 18 22 / 35%) 0px 10px 38px -10px, rgb(14 18 22 / 20%) 0px 10px 20px -15px; padding: 20px;"
+            >
+              <template #reference>
+                <el-icon style="cursor: pointer">
+                  <Bell />
+                </el-icon>
+              </template>
+
+              <template #default>
+                <div style="display: flex; gap: 12px; flex-direction: column">
+                  <p style="margin: 0; font-weight: 500">Project Type Guide</p>
+                  <ul style="margin: 0; font-size: 13px; color: var(--el-color-info); padding-left: 18px">
+                    <CocomoModeTable style="width: 100%; margin: 0 auto" />
+                  </ul>
+                </div>
+              </template>
+            </el-popover>
+          </template>
+
           <el-select v-model="projectType" placeholder="Select type">
             <el-option label="Organic" value="organic" />
             <el-option label="Semi-detached" value="semidetached" />
@@ -20,8 +44,7 @@
       </el-form>
 
 
-      <el-divider>COCOMO Model Parameters</el-divider>
-        <CocomoModeTable style="width: 100%; margin: 0 auto" />
+
 
       <el-divider>Estimation Result</el-divider>
 
@@ -35,10 +58,11 @@
 
 <script>
 import CocomoModeTable from "@/components/CocomoModeTable.vue";
+import {Bell} from "@element-plus/icons";
 
 export default {
   name: 'COCOMOEstimator',
-  components: {CocomoModeTable},
+  components: {Bell, CocomoModeTable},
   data() {
     return {
       kloc: 0,
