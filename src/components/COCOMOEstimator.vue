@@ -1,70 +1,109 @@
 <template>
-  <div>
-    <el-card style="height: 82vh">
-      <h2 style="margin-bottom: 30px">COCOMO Estimator</h2>
+  <div class="container">
+    <div class="header">
+      <h2>COCOMO Estimator</h2>
+    </div>
 
-      <el-form label-width="220px" class="fp-form">
-        <!-- 项目规模 -->
-        <el-form-item label="Project Size (KLOC)">
-          <el-input-number v-model="kloc" :min="0" :step="0.1" />
-        </el-form-item>
+    <div class="main-content">
+      <!-- 输入区域 -->
+      <div class="input-section">
+        <div class="card">
+          <h3>Project Parameters</h3>
 
-        <!-- 项目类型 -->
-        <el-form-item>
-          <template #label>
-            <span style="margin-right: 6px">Project Type</span>
-            <el-popover
-                :width="1000"
-                popper-style="box-shadow: rgb(14 18 22 / 35%) 0px 10px 38px -10px, rgb(14 18 22 / 20%) 0px 10px 20px -15px; padding: 20px;"
-            >
-              <template #reference>
-                <el-icon style="cursor: pointer">
-                  <Bell />
-                </el-icon>
-              </template>
-              <template #default>
-                <div style="display: flex; gap: 12px; flex-direction: column">
-                  <p style="margin: 0; font-weight: 500">Project Type Guide</p>
-                  <ul style="margin: 0; font-size: 13px; color: var(--el-color-info); padding-left: 18px">
-                    <CocomoModeTable style="width: 100%; margin: 0 auto" />
-                  </ul>
-                </div>
-              </template>
-            </el-popover>
-          </template>
-          <el-select v-model="projectType" placeholder="Select type">
-            <el-option label="Organic" value="organic" />
-            <el-option label="Semi-detached" value="semidetached" />
-            <el-option label="Embedded" value="embedded" />
-          </el-select>
-        </el-form-item>
+          <div class="form-group">
+            <label>Project Size (KLOC)</label>
+            <el-input-number v-model="kloc" :min="0" :step="0.1" style="width: 200px" />
+          </div>
 
-        <!-- 成本驱动因子 -->
-        <el-divider>Cost Drivers</el-divider>
-        <div style="width: 60%">
-          <el-form-item v-for="(levels, driver) in costDrivers" :key="driver" :label="driver.toUpperCase()">
-            <el-select v-model="selectedDrivers[driver]">
-              <el-option v-for="(value, level) in levels" :key="level" :label="`${level} (${value})`" :value="level" />
+          <div class="form-group">
+            <label>
+              Project Type
+              <el-popover :width="1000" trigger="hover">
+                <template #reference>
+                  <el-icon style="margin-left: 8px; cursor: help">
+                    <Bell />
+                  </el-icon>
+                </template>
+                <template #default>
+                  <CocomoModeTable />
+                </template>
+              </el-popover>
+            </label>
+            <el-select v-model="projectType" style="width: 200px">
+              <el-option label="Organic" value="organic" />
+              <el-option label="Semi-detached" value="semidetached" />
+              <el-option label="Embedded" value="embedded" />
             </el-select>
-          </el-form-item>
+          </div>
+
+          <div class="form-group">
+            <label>Monthly Salary ($)</label>
+            <el-input-number v-model="salary" :min="0" style="width: 200px" />
+          </div>
         </div>
-        <!-- 工资 -->
-        <el-form-item label="Monthly Salary (¥)">
-          <el-input-number v-model="salary" :min="0" />
-        </el-form-item>
-      </el-form>
 
-      <el-divider>Estimation Result</el-divider>
-
-      <div class="calc-item">
-        <p><strong>Basic Effort (E):</strong> {{ effort.toFixed(2) }} person-months</p>
-        <p><strong>EAF (Effort Adjustment Factor):</strong> {{ eaf.toFixed(2) }}</p>
-        <p><strong>Adjusted Effort:</strong> {{ adjustedEffort.toFixed(2) }} person-months</p>
-        <p><strong>Time (T):</strong> {{ time.toFixed(2) }} months</p>
-        <p><strong>People (P):</strong> {{ people.toFixed(2) }}</p>
-        <p><strong>Total Cost:</strong> ¥{{ totalCost.toFixed(2) }}</p>
+        <div class="card">
+          <h3>Cost Drivers</h3>
+          <div class="drivers-container">
+            <div
+                v-for="(levels, driver) in costDrivers"
+                :key="driver"
+                class="driver-item"
+            >
+              <label>{{ driver }}</label>
+              <el-select v-model="selectedDrivers[driver]" style="width: 200px">
+                <el-option
+                    v-for="(value, level) in levels"
+                    :key="level"
+                    :label="`${level} (${value})`"
+                    :value="level"
+                />
+              </el-select>
+            </div>
+          </div>
+        </div>
       </div>
-    </el-card>
+
+      <!-- 结果区域 -->
+      <div class="result-section">
+        <div class="card">
+          <h3>Results</h3>
+
+          <div class="result-grid">
+            <div class="result-item">
+              <div class="result-label">Adjusted Effort</div>
+              <div class="result-value">{{ adjustedEffort.toFixed(2) }} PM</div>
+            </div>
+
+            <div class="result-item">
+              <div class="result-label">Development Time</div>
+              <div class="result-value">{{ time.toFixed(2) }} months</div>
+            </div>
+
+            <div class="result-item">
+              <div class="result-label">Team Size</div>
+              <div class="result-value">{{ people.toFixed(2) }} people</div>
+            </div>
+
+            <div class="result-item total-cost">
+              <div class="result-label">Total Cost</div>
+              <div class="result-value">${{ totalCost.toLocaleString() }}</div>
+            </div>
+          </div>
+
+          <div class="details">
+            <div class="detail-item">
+              <span>Basic Effort (E):</span>
+              <span>{{ effort.toFixed(2) }} PM</span>
+            </div>
+            <div class="detail-item">
+              <span>EAF Factor:</span>
+              <span>{{ eaf.toFixed(3) }}</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
   </div>
 </template>
 
@@ -77,9 +116,9 @@ export default {
   components: { Bell, CocomoModeTable },
   data() {
     return {
-      kloc: 0,
+      kloc: 10,
       projectType: "organic",
-      salary: 10000,
+      salary: 15000,
       selectedDrivers: {
         RELY: "Nominal",
         CPLX: "Nominal",
@@ -131,13 +170,146 @@ export default {
 </script>
 
 <style scoped>
-.fp-form {
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 20px;
+  background-color: #f8fafc;
+  min-height: 87vh;
+}
+
+.header {
+  text-align: center;
+  margin-bottom: 30px;
+}
+
+.header h2 {
+  margin: 0;
+  color: #333;
+  font-weight: 500;
+}
+
+.main-content {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 30px;
+}
+
+.card {
+  background: white;
+  border-radius: 8px;
+  padding: 24px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+  margin-bottom: 20px;
+}
+
+.card h3 {
+  margin: 0 0 20px 0;
+  color: #333;
+  font-size: 18px;
+  font-weight: 500;
+  border-bottom: 1px solid #eee;
+  padding-bottom: 10px;
+}
+
+.form-group {
+  margin-bottom: 20px;
+}
+
+.form-group label {
+  display: block;
+  margin-bottom: 8px;
+  font-weight: 500;
+  color: #666;
+  display: flex;
+  align-items: center;
+}
+
+.drivers-container {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+}
+
+.driver-item {
   display: flex;
   flex-direction: column;
-  gap: 10px;
+  gap: 8px;
 }
-.calc-item {
-  font-size: 16px;
-  margin-top: 20px;
+
+.driver-item label {
+  font-size: 14px;
+  font-weight: 500;
+  color: #666;
+}
+
+.result-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+  margin-bottom: 24px;
+}
+
+.result-item {
+  padding: 16px;
+  background: #f8f9fa;
+  border-radius: 6px;
+  text-align: center;
+}
+
+.result-item.total-cost {
+  background: #e8f5e8;
+  grid-column: 1 / -1;
+}
+
+.result-label {
+  font-size: 14px;
+  color: #666;
+  margin-bottom: 4px;
+}
+
+.result-value {
+  font-size: 20px;
+  font-weight: 600;
+  color: #333;
+}
+
+.total-cost .result-value {
+  color: #2d5016;
+}
+
+.details {
+  border-top: 1px solid #eee;
+  padding-top: 16px;
+}
+
+.detail-item {
+  display: flex;
+  justify-content: space-between;
+  padding: 8px 0;
+  font-size: 14px;
+}
+
+.detail-item span:first-child {
+  color: #666;
+}
+
+.detail-item span:last-child {
+  font-weight: 500;
+  color: #333;
+}
+
+@media (max-width: 768px) {
+  .main-content {
+    grid-template-columns: 1fr;
+  }
+
+  .drivers-container {
+    grid-template-columns: 1fr;
+  }
+
+  .result-grid {
+    grid-template-columns: 1fr;
+  }
 }
 </style>

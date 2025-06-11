@@ -5,7 +5,7 @@
         <el-table :data="tableData" style="width: 100%" max-height="400">
           <el-table-column prop="id" label="Task ID" width="150" />
 
-          <el-table-column label="Duration (Weeks)" width="200">
+          <el-table-column label="Duration (Days)" width="200">
             <template #default="scope">
               <el-input-number
                   v-model="scope.row.duration"
@@ -59,7 +59,7 @@
           </el-table-column>
         </el-table>
 
-        <el-button class="mt-4" style="width: 100%" @click="onAddItem">
+        <el-button type="primary" class="mt-4" style="width: 100%" @click="onAddItem">
           Add Task
         </el-button>
       </div>
@@ -81,77 +81,77 @@
 
     <!-- 甘特图区域 -->
     <div style="display: flex;">
-      <el-card style="height: 43vh; width: 49%; padding: 0; overflow-y: auto;" shadow="hover">
+      <el-card style="height: 43vh; width: 49%; padding: 0;" shadow="hover">
         <div class="gantt-container" v-if="ganttData.tasks.length > 0">
           <!-- 甘特图标题 -->
           <div class="gantt-header">
             <h3>Original Tasks</h3>
             <div class="gantt-legend">
-            <span class="legend-item">
-              <span class="legend-color es-bar"></span>
-              Earliest Start Schedule
-            </span>
+        <span class="legend-item">
+          <span class="legend-color es-bar"></span>
+          Earliest Start Schedule
+        </span>
               <span class="legend-item">
-              <span class="legend-color ls-bar"></span>
-              Latest Start Schedule
-            </span>
+          <span class="legend-color ls-bar"></span>
+          Latest Start Schedule
+        </span>
             </div>
           </div>
 
-          <!-- 时间轴 -->
-          <div class="gantt-timeline">
-            <div class="timeline-header">
-              <div class="task-names-header">Tasks</div>
-              <div class="timeline-dates">
-                <div
-                    v-for="week in ganttData.timelineWeeks"
-                    :key="week.weekStart"
-                    class="timeline-week"
-                    :style="{ width: weekWidth + 'px' }"
-                >
-                  {{ formatWeek(week.weekStart) }}
+          <!-- ✅ 整体横向滚动区域：包括时间轴和任务条 -->
+          <div class="gantt-scroll-wrapper">
+            <div class="gantt-scroll-area" :style="{ width: timelineWidth + 150 + 'px' }">
+              <!-- 时间轴 header -->
+              <div class="timeline-header">
+                <div class="task-names-header">Tasks</div>
+                <div class="timeline-dates">
+                  <div
+                      v-for="week in ganttData.timelineWeeks"
+                      :key="week.weekStart"
+                      class="timeline-week"
+                      :style="{ width: weekWidth + 'px' }"
+                  >
+                    {{ formatWeek(week.weekStart) }}
+                  </div>
                 </div>
               </div>
-            </div>
-          </div>
 
-          <!-- 甘特图主体 -->
-          <div class="gantt-body">
-            <div
-                v-for="(task, index) in ganttData.tasks"
-                :key="task.id"
-                class="gantt-row"
-            >
-              <!-- 任务名称 -->
-              <div class="task-name">
-                Task {{ task.id }}
-                <small>({{ task.duration }}w)</small>
-              </div>
-
-              <!-- 任务条形图区域 -->
-              <div class="task-timeline" :style="{ width: timelineWidth + 'px' }">
-                <!-- ES (Earliest Start) 条形图 -->
+              <!-- 甘特图主体 -->
+              <div class="gantt-body">
                 <div
-                    class="task-bar es-bar"
-                    :style="{
-                  left: task.esOffset + 'px',
-                  width: task.barWidth + 'px'
-                }"
-                    :title="`ES: ${formatDate(task.esDate)} - ${formatDate(task.esEndDate)}`"
+                    v-for="(task, index) in ganttData.tasks"
+                    :key="task.id"
+                    class="gantt-row"
                 >
-                  <span class="task-bar-text">ES</span>
-                </div>
+                  <!-- 任务名称 -->
+                  <div class="task-name">
+                    Task {{ task.id }}
+                    <small>{{ task.duration }}day(s)</small>
+                  </div>
 
-                <!-- LS (Latest Start) 条形图 -->
-                <div
-                    class="task-bar ls-bar"
-                    :style="{
-                  left: task.lsOffset + 'px',
-                  width: task.barWidth + 'px'
-                }"
-                    :title="`LS: ${formatDate(task.lsDate)} - ${formatDate(task.lsEndDate)}`"
-                >
-                  <span class="task-bar-text">LS</span>
+                  <!-- ✅ 取消单独横向滚动，让它跟随外层滚 -->
+                  <div class="task-timeline">
+                    <div
+                        class="task-bar es-bar"
+                        :style="{
+              left: task.esOffset + 'px',
+              width: task.barWidth + 'px'
+            }"
+                        :title="`ES: ${formatDate(task.esDate)} - ${formatDate(task.esEndDate)}`"
+                    >
+                      <span class="task-bar-text">ES</span>
+                    </div>
+                    <div
+                        class="task-bar ls-bar"
+                        :style="{
+              left: task.lsOffset + 'px',
+              width: task.barWidth + 'px'
+            }"
+                        :title="`LS: ${formatDate(task.lsDate)} - ${formatDate(task.lsEndDate)}`"
+                    >
+                      <span class="task-bar-text">LS</span>
+                    </div>
+                  </div>
                 </div>
               </div>
             </div>
@@ -164,77 +164,77 @@
         </div>
       </el-card>
 
-      <el-card style="height: 43vh; width: 49%;margin-left: 2%; padding: 0; overflow-y: auto;" shadow="hover">
-        <div class="gantt-container" v-if="ganttData.tasks.length > 0">
+      <el-card style="height: 43vh; width: 49%; padding: 0; margin-left: 2%" shadow="hover">
+        <div class="gantt-container" v-if="ganttResultData.tasks.length > 0">
           <!-- 甘特图标题 -->
           <div class="gantt-header">
-            <h3>Optimized Tasks</h3>
+            <h3>Result</h3>
             <div class="gantt-legend">
-            <span class="legend-item">
-              <span class="legend-color es-bar"></span>
-              Earliest Start Schedule
-            </span>
+        <span class="legend-item">
+          <span class="legend-color es-bar"></span>
+          Earliest Start Schedule
+        </span>
               <span class="legend-item">
-              <span class="legend-color ls-bar"></span>
-              Latest Start Schedule
-            </span>
+          <span class="legend-color ls-bar"></span>
+          Latest Start Schedule
+        </span>
             </div>
           </div>
 
-          <!-- 时间轴 -->
-          <div class="gantt-timeline">
-            <div class="timeline-header">
-              <div class="task-names-header">Tasks</div>
-              <div class="timeline-dates">
-                <div
-                    v-for="week in ganttData.timelineWeeks"
-                    :key="week.weekStart"
-                    class="timeline-week"
-                    :style="{ width: weekWidth + 'px' }"
-                >
-                  {{ formatWeek(week.weekStart) }}
+          <!-- ✅ 整体横向滚动区域：包括时间轴和任务条 -->
+          <div class="gantt-scroll-wrapper">
+            <div class="gantt-scroll-area" :style="{ width: resultTimelineWidth + 150 + 'px' }">
+              <!-- 时间轴 header -->
+              <div class="timeline-header">
+                <div class="task-names-header">Tasks</div>
+                <div class="timeline-dates">
+                  <div
+                      v-for="week in ganttResultData.timelineWeeks"
+                      :key="week.weekStart"
+                      class="timeline-week"
+                      :style="{ width: weekWidth + 'px' }"
+                  >
+                    {{ formatWeek(week.weekStart) }}
+                  </div>
                 </div>
               </div>
-            </div>
-          </div>
 
-          <!-- 甘特图主体 -->
-          <div class="gantt-body">
-            <div
-                v-for="(task, index) in ganttData.tasks"
-                :key="task.id"
-                class="gantt-row"
-            >
-              <!-- 任务名称 -->
-              <div class="task-name">
-                Task {{ task.id }}
-                <small>({{ task.duration }}w)</small>
-              </div>
-
-              <!-- 任务条形图区域 -->
-              <div class="task-timeline" :style="{ width: timelineWidth + 'px' }">
-                <!-- ES (Earliest Start) 条形图 -->
+              <!-- 甘特图主体 -->
+              <div class="gantt-body">
                 <div
-                    class="task-bar es-bar"
-                    :style="{
-                  left: task.esOffset + 'px',
-                  width: task.barWidth + 'px'
-                }"
-                    :title="`ES: ${formatDate(task.esDate)} - ${formatDate(task.esEndDate)}`"
+                    v-for="(task, index) in ganttResultData.tasks"
+                    :key="task.id"
+                    class="gantt-row"
                 >
-                  <span class="task-bar-text">ES</span>
-                </div>
+                  <!-- 任务名称 -->
+                  <div class="task-name">
+                    Task {{ task.id }}
+                    <small>{{ task.duration }}day(s)</small>
+                  </div>
 
-                <!-- LS (Latest Start) 条形图 -->
-                <div
-                    class="task-bar ls-bar"
-                    :style="{
-                  left: task.lsOffset + 'px',
-                  width: task.barWidth + 'px'
-                }"
-                    :title="`LS: ${formatDate(task.lsDate)} - ${formatDate(task.lsEndDate)}`"
-                >
-                  <span class="task-bar-text">LS</span>
+                  <!-- ✅ 取消单独横向滚动，让它跟随外层滚 -->
+                  <div class="task-timeline">
+                    <div
+                        class="task-bar result-es-bar"
+                        :style="{
+              left: task.esOffset + 'px',
+              width: task.barWidth + 'px'
+            }"
+                        :title="`ES: ${formatDate(task.esDate)} - ${formatDate(task.esEndDate)}`"
+                    >
+                      <span class="task-bar-text">ES</span>
+                    </div>
+<!--                    <div-->
+<!--                        class="task-bar ls-bar"-->
+<!--                        :style="{-->
+<!--              left: task.lsOffset + 'px',-->
+<!--              width: task.barWidth + 'px'-->
+<!--            }"-->
+<!--                        :title="`LS: ${formatDate(task.lsDate)} - ${formatDate(task.lsEndDate)}`"-->
+<!--                    >-->
+<!--                      <span class="task-bar-text">LS</span>-->
+<!--                    </div>-->
+                  </div>
                 </div>
               </div>
             </div>
@@ -254,6 +254,7 @@
 <script>
 import dayjs from "dayjs";
 import BarChart from "@/components/BarChart.vue";
+import request from "@/utils/request.js";
 
 export default {
   name: "Algo4",
@@ -264,6 +265,7 @@ export default {
       now: new Date(),
       idCounter: 1,
       tableData: [],
+      resultData: [],
       weekWidth: 80, // 每周的像素宽度
     };
   },
@@ -279,8 +281,8 @@ export default {
         this.tableData[0].demand = 5;
         this.tableData[1].duration = 2;
         this.tableData[1].demand = 3;
-        this.tableData[1].es = dayjs(this.now).add(1, 'week').format("YYYY-MM-DD");
-        this.tableData[1].ls = dayjs(this.now).add(2, 'week').format("YYYY-MM-DD");
+        this.tableData[1].es = dayjs(this.now).add(1, 'day').format("YYYY-MM-DD");
+        this.tableData[1].ls = dayjs(this.now).add(2, 'day').format("YYYY-MM-DD");
       }
     });
   },
@@ -306,9 +308,9 @@ export default {
           duration: duration,
           demand: item.demand,
           esDate: esDate.toDate(),
-          esEndDate: esDate.add(duration, 'week').toDate(),
+          esEndDate: esDate.add(duration, 'day').toDate(),
           lsDate: lsDate.toDate(),
-          lsEndDate: lsDate.add(duration, 'week').toDate(),
+          lsEndDate: lsDate.add(duration, 'day').toDate(),
         };
       });
 
@@ -322,8 +324,8 @@ export default {
         return { tasks: [], timelineWeeks: [], startDate: null, endDate: null };
       }
 
-      const startDate = dayjs(Math.min(...allDates)).startOf('week');
-      const endDate = dayjs(Math.max(...allDates)).endOf('week');
+      const startDate = dayjs(Math.min(...allDates)).startOf('day');
+      const endDate = dayjs(Math.max(...allDates)).endOf('day');
 
       // 生成时间轴周数
       const timelineWeeks = [];
@@ -332,13 +334,13 @@ export default {
         timelineWeeks.push({
           weekStart: current.toDate(),
         });
-        current = current.add(1, 'week');
+        current = current.add(1, 'day');
       }
 
       // 计算每个任务的位置和宽度
       const tasksWithPosition = tasks.map(task => {
-        const esWeeksDiff = dayjs(task.esDate).diff(startDate, 'week', true);
-        const lsWeeksDiff = dayjs(task.lsDate).diff(startDate, 'week', true);
+        const esWeeksDiff = dayjs(task.esDate).diff(startDate, 'day', true);
+        const lsWeeksDiff = dayjs(task.lsDate).diff(startDate, 'day', true);
 
         return {
           ...task,
@@ -347,7 +349,78 @@ export default {
           barWidth: Math.round(task.duration * this.weekWidth),
         };
       });
+      return {
+        tasks: tasksWithPosition,
+        timelineWeeks,
+        startDate: startDate.toDate(),
+        endDate: endDate.toDate(),
+      };
 
+    },
+    timelineWidth() {
+      return this.ganttData.timelineWeeks.length * this.weekWidth;
+    },
+    resultTimelineWidth(){
+      return this.ganttResultData.timelineWeeks.length * this.weekWidth;
+    },
+    ganttResultData() {
+      const tableData = this.resultData || [];
+
+      if (tableData.length === 0) {
+        return { tasks: [], timelineWeeks: [], startDate: null, endDate: null };
+      }
+
+      const tasks = tableData.map(item => {
+        const esDate = dayjs(item.es);
+        const lsDate = dayjs(item.ls);
+        const duration = item.duration || 0;
+
+        return {
+          id: item.id,
+          duration: duration,
+          demand: item.demand,
+          esDate: esDate.toDate(),
+          esEndDate: esDate.add(duration, 'day').toDate(),
+          lsDate: lsDate.toDate(),
+          lsEndDate: lsDate.add(duration, 'day').toDate(),
+        };
+      });
+
+      // 计算总的时间范围
+      const allDates = tasks.reduce((dates, task) => {
+        dates.push(task.esDate, task.esEndDate, task.lsDate, task.lsEndDate);
+        return dates;
+      }, []);
+
+      if (allDates.length === 0) {
+        return { tasks: [], timelineWeeks: [], startDate: null, endDate: null };
+      }
+
+      const startDate = dayjs(Math.min(...allDates)).startOf('day');
+      const endDate = dayjs(Math.max(...allDates)).endOf('day');
+
+      // 生成时间轴周数
+      const timelineWeeks = [];
+      let current = startDate;
+      while (current.isBefore(endDate) || current.isSame(endDate)) {
+        timelineWeeks.push({
+          weekStart: current.toDate(),
+        });
+        current = current.add(1, 'day');
+      }
+
+      // 计算每个任务的位置和宽度
+      const tasksWithPosition = tasks.map(task => {
+        const esWeeksDiff = dayjs(task.esDate).diff(startDate, 'day', true);
+        const lsWeeksDiff = dayjs(task.lsDate).diff(startDate, 'day', true);
+
+        return {
+          ...task,
+          esOffset: Math.round(esWeeksDiff * this.weekWidth),
+          lsOffset: Math.round(lsWeeksDiff * this.weekWidth),
+          barWidth: Math.round(task.duration * this.weekWidth),
+        };
+      });
       return {
         tasks: tasksWithPosition,
         timelineWeeks,
@@ -355,9 +428,6 @@ export default {
         endDate: endDate.toDate(),
       };
     },
-    timelineWidth() {
-      return this.ganttData.timelineWeeks.length * this.weekWidth;
-    }
   },
   methods: {
     deleteRow(index) {
@@ -375,7 +445,27 @@ export default {
     },
     test() {
       // 优化算法的实现
-      console.log(this.tableData);
+      const clonedTableData = this.tableData.map(item => {
+        const clonedItem = JSON.parse(JSON.stringify(item));
+
+        // 判断是否是 Date 对象（即为完整时间格式），才格式化为 YYYY-MM-DD
+        if (item.es instanceof Date) {
+          clonedItem.es = dayjs(item.es).format('YYYY-MM-DD');
+        }
+
+        if (item.ls instanceof Date) {
+          clonedItem.ls = dayjs(item.ls).format('YYYY-MM-DD');
+        }
+
+        return clonedItem;
+      });
+      request.post('/optimize/smooth/', clonedTableData).then(res=>{
+        if(res.code === 200){
+          this.resultData = res.msg
+        }
+      })
+
+      console.log(clonedTableData);
     },
     formatWeek(date) {
       return dayjs(date).format('MM/DD');
@@ -385,6 +475,7 @@ export default {
     },
     refresh(){
       this.tableData = []
+      this.resultData = []
     }
   },
 };
@@ -459,7 +550,6 @@ export default {
 .timeline-dates {
   display: flex;
   flex: 1;
-  overflow-x: auto;
 }
 
 .timeline-week {
@@ -514,7 +604,6 @@ export default {
   position: relative;
   flex: 1;
   min-height: 60px;
-  overflow-x: auto;
 }
 
 .task-bar {
@@ -544,6 +633,12 @@ export default {
   border: 1px solid #409eff;
 }
 
+.result-es-bar {
+  background: linear-gradient(135deg, #22b11e, rgba(67, 165, 89, 0.8));
+  top: 24px;
+  border: 1px #4bb347;
+}
+
 .ls-bar {
   background: linear-gradient(135deg, #f56c6c, #f78989);
   top: 36px;
@@ -564,6 +659,20 @@ export default {
   height: 100%;
   color: #909399;
   font-size: 14px;
+}
+
+.gantt-scroll-wrapper {
+  overflow-x: auto;
+  position: relative;
+}
+
+.gantt-scroll-area {
+  display: inline-block;
+  min-width: 100%;
+}
+
+.timeline-dates {
+  display: flex;
 }
 
 /* 滚动条样式 */

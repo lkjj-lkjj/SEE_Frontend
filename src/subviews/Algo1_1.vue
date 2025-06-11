@@ -24,7 +24,7 @@ export default {
     }
   },
   mounted() {
-    this.setCurrentPath('Empirical Estimation')
+    this.setCurrentPath('Cost Estimation Module / Empirical Estimation')
   },
   inject: ['currentPath', 'setCurrentPath'],
 }

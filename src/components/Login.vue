@@ -110,7 +110,7 @@ export default {
 
         const login_data = {
           "username": this.form.email,
-          "password": this.form.password
+          "password": this.form.password,
         }
 
         request.post("/user/login/", login_data).then(res => {
@@ -145,8 +145,11 @@ export default {
         })
       } else {
         const register_data = {
-          'username': this.registerData.username,
+          'username': this.registerData.name,
           'password': this.registerData.password,
+          "password1": this.registerData.repassword,
+          "email": this.registerData.email,
+          'gender': this.registerData.gender
         }
         request.post("/user/register/", register_data).then(res => {
           this.$message({

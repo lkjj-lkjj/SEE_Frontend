@@ -104,6 +104,18 @@
         </div>
       </template>
 
+      <div style="width: 80%; margin: 0 auto">
+        <div class="analysis-item">
+          <span class="label">Delphi Estimate:</span>
+          <span class="value">{{ Number(Delphi_data).toLocaleString() }}</span>
+        </div>
+        <div class="analysis-item">
+          <span class="label">Expert Estimate:</span>
+          <span class="value">{{ Number(Expert_data).toLocaleString() }}</span>
+        </div>
+      </div>
+
+
     </el-card>
 
     <el-card style="width: 49%; height: 100%; margin-left: 2%">
@@ -113,22 +125,34 @@
         </div>
       </template>
 
+      <div v-if="Regression_data" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(500px, 1fr)); gap: 12px;">
+        <div style="width: 80%; margin: 0 auto">
+          <div class="analysis-item" v-for="(value, key) in Regression_data" :key="key">
+            <span class="label">{{ key.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase()) }}:</span>
+            <span class="value">{{ Number(value).toLocaleString() }}</span>
+          </div>
+        </div>
+      </div>
+      <div v-else style="color: #999;">No regression result yet. Click "Calculate Estimate".</div>
+
     </el-card>
   </div>
 </template>
 
 <script>
+import request from "@/utils/request.js";
+
 export default {
   name: "Algo1_2",
   data() {
     return {
       formData: {
-        function_points: null,
-        modules_count: null,
-        interfaces_count: null,
+        function_points: 100,
+        modules_count: 20,
+        interfaces_count: 50,
         technical_difficulty: 3,
         team_experience: 3,
-        expected_delivery_time: null
+        expected_delivery_time: 6
       },
       rules: {
         function_points: [
@@ -145,20 +169,43 @@ export default {
         ]
       },
       estimationResult: null,
-      paramAnalysis: null
+      paramAnalysis: null,
+      Delphi_data: '',
+      Expert_data: '',
+      Regression_data: ''
     }
   },
   mounted() {
-    this.setCurrentPath('Advanced consumption analysis')
+    this.setCurrentPath('Cost Estimation Module / Advanced consumption analysis')
   },
   inject: ['currentPath', 'setCurrentPath'],
+
   methods: {
     calculateEstimate() {
-
+      request.post('/cost/Delphi/', this.formData).then(res=>{
+        console.log(res.msg)
+        this.Delphi_data = res.msg
+      })
+      request.post('/cost/Expert/', this.formData).then(res=>{
+        console.log(res.msg)
+        this.Expert_data = res.msg
+      })
+      request.post('/cost/Regression/', this.formData).then(res=>{
+        console.log(res.msg)
+        this.Regression_data = res
+      })
+    },
+    resetFormData() {
+      for (const key in this.formData) {
+        if (Object.prototype.hasOwnProperty.call(this.formData, key)) {
+          this.formData[key] = null;
+        }
+      }
     },
 
     resetForm() {
-      this.$refs.paramForm.resetFields();
+      // this.$refs.paramForm.resetFields();
+      this.resetFormData()
       this.estimationResult = null;
       this.paramAnalysis = null;
       this.$message.info('Form reset');

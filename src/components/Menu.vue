@@ -44,7 +44,7 @@ export default {
     </el-menu-item>
     <el-menu-item index="3">
       <el-icon><document /></el-icon>
-      <span>Navigator Three</span>
+      <span>Risk Management Module</span>
     </el-menu-item>
     <el-menu-item index="4" @click="go2Item('4')">
       <el-icon><setting /></el-icon>
