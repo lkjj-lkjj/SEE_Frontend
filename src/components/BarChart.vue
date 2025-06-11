@@ -1,5 +1,5 @@
 <template>
-  <div ref="chartRef" style="width: 100%; height: 270px;"></div>
+  <div ref="chartRef" style="min-height: 270px; width: 100%"></div>
 </template>
 
 <script>
@@ -8,6 +8,7 @@ import * as echarts from 'echarts';
 export default {
   name: 'BarChart',
   props: {
+    head_title: String,
     data: Array,
     labels: Array
   },
@@ -34,7 +35,7 @@ export default {
     setChartOption() {
       const option = {
         title: {
-          text: 'Function Point Subtotal',
+          text: this.head_title,
           left: 'center'
         },
         tooltip: {},

@@ -79,7 +79,9 @@
 
 
       <el-divider>Calculation Breakdown</el-divider>
-      <BarChart :data="chartValues" :labels="chartLabels"/>
+
+      <BarChart :head_title="'FP Points'" :data="chartValues" :labels="chartLabels"/>
+
       <h3>Total Function Points:
         <el-tag type="success">{{ totalFP }}</el-tag>
       </h3>

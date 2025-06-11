@@ -35,23 +35,20 @@ export default {
         <span>Cost Estimation Module</span>
       </template>
 
-      <el-menu-item index="1-1" @click="go2Item('1')">Empirical Estimation</el-menu-item>
-      <el-menu-item index="1-2" @click="go2Item('2')">Heuristic Estimation</el-menu-item>
-      <el-menu-item index="1-3" @click="go2Item('3')">Analytical Mathematical Models</el-menu-item>
-
-
+      <el-menu-item index="1-1" @click="go2Item('1_1')">Empirical Estimation</el-menu-item>
+      <el-menu-item index="1-2" @click="go2Item('1_2')">Advanced consumption analysis</el-menu-item>
     </el-sub-menu>
-    <el-menu-item index="2">
+    <el-menu-item index="2"  @click="go2Item('2')">
       <el-icon><icon-menu /></el-icon>
-      <span>Navigator Two</span>
+      <span>Budget Track</span>
     </el-menu-item>
-    <el-menu-item index="3" disabled>
+    <el-menu-item index="3">
       <el-icon><document /></el-icon>
       <span>Navigator Three</span>
     </el-menu-item>
-    <el-menu-item index="4">
+    <el-menu-item index="4" @click="go2Item('4')">
       <el-icon><setting /></el-icon>
-      <span>Navigator Four</span>
+      <span>Resource Allocation & Optimization</span>
     </el-menu-item>
   </el-menu>
 </template>
