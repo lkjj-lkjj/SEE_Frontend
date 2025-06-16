@@ -1,5 +1,9 @@
 <template>
   <div class="fp-container">
+    <div class="header">
+      <h2>Function Point Calculator</h2>
+    </div>
+
     <!-- 主内容区域 -->
     <div class="main-content">
       <!-- 左侧：功能点输入 + 柱状图 -->
@@ -221,6 +225,10 @@ export default {
 </script>
 
 <style scoped>
+.header {
+  text-align: center;
+  margin-bottom: 30px;
+}
 .fp-container {
   height: 87vh;
   background-color: #f8fafc;
@@ -234,7 +242,7 @@ export default {
   gap: 16px;
   max-width: 1200px;
   margin: 0 auto;
-  height: 100%;
+  height: 90%;
 }
 
 .input-section,

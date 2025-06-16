@@ -42,7 +42,7 @@ export default {
       <el-icon><icon-menu /></el-icon>
       <span>Budget Track</span>
     </el-menu-item>
-    <el-menu-item index="3">
+    <el-menu-item index="3" @click="go2Item('3')">
       <el-icon><document /></el-icon>
       <span>Risk Management Module</span>
     </el-menu-item>

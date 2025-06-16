@@ -6,6 +6,7 @@ import Algo2 from "@/subviews/Algo2.vue";
 import Algo4 from "@/subviews/Algo4.vue";
 import Algo1_1 from "@/subviews/Algo1_1.vue";
 import Algo1_2 from "@/subviews/Algo1_2.vue";
+import Algo3 from "@/subviews/Algo3.vue";
 
 const routes = [
     {
@@ -32,6 +33,10 @@ const routes = [
             {
                 path: 'algo2',
                 component: Algo2
+            },
+            {
+                path: 'algo3',
+                component: Algo3
             },
             {
                 path: 'algo4',
